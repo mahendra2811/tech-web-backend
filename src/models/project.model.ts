@@ -117,7 +117,7 @@ const ProjectSchema: Schema = new Schema(
 // Create slug from title before saving
 ProjectSchema.pre('save', function (next) {
   if (this.isModified('title')) {
-    this.slug = slugify(this.title, { lower: true });
+    this.slug = slugify(this.title as string, { lower: true });
   }
   next();
 });

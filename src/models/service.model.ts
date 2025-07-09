@@ -69,7 +69,7 @@ const ServiceSchema: Schema = new Schema(
 // Create slug from title before saving
 ServiceSchema.pre('save', function (next) {
   if (this.isModified('title')) {
-    this.slug = slugify(this.title, { lower: true });
+    this.slug = slugify(this.title as string, { lower: true });
   }
   next();
 });

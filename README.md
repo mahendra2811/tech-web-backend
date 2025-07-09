@@ -80,12 +80,14 @@ backend/
 ### Installation
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/yourusername/my-website.git
 cd my-website/backend
 ```
 
 2. Install dependencies
+
 ```bash
 npm install
 # or
@@ -93,6 +95,7 @@ yarn install
 ```
 
 3. Set up environment variables
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
@@ -391,11 +394,13 @@ docker-compose up
 The API can be deployed to any Node.js hosting service:
 
 1. Build the TypeScript code:
+
 ```bash
 npm run build
 ```
 
 2. Start the server:
+
 ```bash
 npm start
 ```

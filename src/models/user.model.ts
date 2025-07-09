@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 
 // User interface
 export interface IUser extends Document {
@@ -87,20 +87,14 @@ UserSchema.methods.matchPassword = async function (enteredPassword: string): Pro
 
 // Sign JWT and return
 UserSchema.methods.getSignedJwtToken = function (): string {
-  const options: SignOptions = {
-    expiresIn: process.env.JWT_EXPIRES_IN || '30d',
-  };
-
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET as string, options);
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' });
 };
 
 // Sign refresh token and return
 UserSchema.methods.getRefreshToken = function (): string {
-  const options: SignOptions = {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-  };
-
-  return jwt.sign({ id: this._id }, process.env.JWT_REFRESH_SECRET as string, options);
+  return jwt.sign({ id: this._id }, process.env.JWT_REFRESH_SECRET || 'refresh_secret', {
+    expiresIn: '7d',
+  });
 };
 
 export default mongoose.model<IUser>('User', UserSchema);
