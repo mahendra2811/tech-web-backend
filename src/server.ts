@@ -7,6 +7,7 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import path from 'path';
+import { AddressInfo } from 'net';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -105,9 +106,29 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 const startServer = async (): Promise<void> => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-    });
+
+    // Try to start the server with the default port
+    const server = app
+      .listen(PORT, () => {
+        const address = server.address() as AddressInfo;
+        console.log(`Server running in ${process.env.NODE_ENV} mode on port ${address.port}`);
+      })
+      .on('error', (err: NodeJS.ErrnoException) => {
+        // If the port is already in use, try another port
+        if (err.code === 'EADDRINUSE') {
+          const alternativePort = parseInt(PORT.toString()) + 1;
+          console.log(`Port ${PORT} is already in use, trying port ${alternativePort}...`);
+
+          // Try the alternative port
+          app.listen(alternativePort, () => {
+            console.log(
+              `Server running in ${process.env.NODE_ENV} mode on port ${alternativePort}`
+            );
+          });
+        } else {
+          throw err;
+        }
+      });
   } catch (error) {
     console.error(`Error starting server: ${error}`);
     process.exit(1);
